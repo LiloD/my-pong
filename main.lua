@@ -1,9 +1,10 @@
 Object = require("libs.classic")
+local push = require("libs.push")
+
 require("utils")
+require("vec2")
 require("entities.paddle")
 require("entities.ball")
-
-local push = require("libs.push")
 
 WIDTH = 192
 HEIGHT = 256
@@ -13,8 +14,15 @@ function love.load()
 
 	love.window.setTitle("My Pong~")
 
-	local font = love.graphics.newFont("assets/fonts/font.ttf", 32)
-	love.graphics.setFont(font)
+	fonts = {
+		small = love.graphics.newFont("assets/fonts/font.ttf", 8),
+		big = love.graphics.newFont("assets/fonts/font.ttf", 32),
+	}
+
+	sounds = {
+		wall_hit = love.audio.newSource("assets/sounds/wall_hit.wav", "static"),
+		paddle_hit = love.audio.newSource("assets/sounds/paddle_hit.wav", "static"),
+	}
 
 	push:setupScreen(WIDTH, HEIGHT, WIDTH * 3, HEIGHT * 3, {
 		fullscreen = false,
@@ -24,8 +32,8 @@ function love.load()
 	})
 
 	player = Paddle()
-	ball = Ball()
-	ball:reset()
+	-- ball = Ball()
+	-- ball:reset()
 end
 
 function love.keypressed(key)
@@ -47,19 +55,18 @@ function love.update(dt)
 		player.dx = 0
 	end
 
-	if ball:collides(player) then
-		ball.y = player.y - ball.h - 1
-		ball.dy = ball.dy * -1
-	end
+	-- ball:handleCollision(player)
 
 	player:update(dt)
-	ball:update(dt)
+	-- ball:update(dt)
 end
 
 function love.draw()
 	push:start()
+	love.graphics.setFont(fonts.big)
 	love.graphics.printf("Hello World", 0, 6, WIDTH, "center")
 	player:draw()
-	ball:draw()
+	-- ball:draw()
+	display_fps()
 	push:finish()
 end
