@@ -1,10 +1,9 @@
-Object = require("libs.classic")
 local push = require("libs.push")
 
 require("utils")
 require("vec2")
-require("entities.paddle")
 require("entities.ball")
+require("entities.paddle")
 
 WIDTH = 192
 HEIGHT = 256
@@ -32,8 +31,8 @@ function love.load()
 	})
 
 	player = Paddle()
-	-- ball = Ball()
-	-- ball:reset()
+	ball = Ball()
+	ball.reset()
 end
 
 function love.keypressed(key)
@@ -55,18 +54,32 @@ function love.update(dt)
 		player.dx = 0
 	end
 
-	-- ball:handleCollision(player)
+	-- handle ball & wall collision
+	if ball.pos.x < 0 then
+		ball.pos.x = 0
+		ball.velocity.x = -ball.velocity.x
+	end
 
-	player:update(dt)
-	-- ball:update(dt)
+	if ball.pos.x > WIDTH - ball.w then
+		ball.pos.x = WIDTH - ball.w
+		ball.velocity.x = -ball.velocity.x
+	end
+
+	-- handle ball reset
+	if ball.pos.y > HEIGHT + 10 then
+		ball.reset()
+	end
+
+	ball.update(dt)
+	player.update(dt)
 end
 
 function love.draw()
 	push:start()
 	love.graphics.setFont(fonts.big)
 	love.graphics.printf("Hello World", 0, 6, WIDTH, "center")
-	player:draw()
-	-- ball:draw()
+	player.draw()
+	ball.draw()
 	display_fps()
 	push:finish()
 end

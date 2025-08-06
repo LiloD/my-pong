@@ -1,23 +1,19 @@
-Paddle = Object:extend()
+function Paddle(x, y, w, h)
+	local that = {}
 
-local defaults = {
-	w = 32,
-	h = 6,
-}
+	that.w = w or 32
+	that.h = h or 6
+	that.pos = Vec2(x or (WIDTH - that.w) / 2, y or HEIGHT - that.h - 10)
+	that.dx = 0
 
-function Paddle:new(x, y, w, h)
-	self.w = w or defaults.w
-	self.h = h or defaults.h
+	function that.update(dt)
+		that.pos.x = that.pos.x + dt * that.dx
+		that.pos.x = math.clamp(that.pos.x, 0, WIDTH - that.w)
+	end
 
-	self.pos = Vec2(x or (WIDTH - self.w) / 2, y or HEIGHT - self.h - 10)
-	self.dx = 0
-end
+	function that.draw()
+		love.graphics.rectangle("fill", that.pos.x, that.pos.y, that.w, that.h)
+	end
 
-function Paddle:update(dt)
-	self.pos.x = self.pos.x + dt * self.dx
-	self.pos.x = math.clamp(self.pos.x, 0, WIDTH - self.w)
-end
-
-function Paddle:draw()
-	love.graphics.rectangle("fill", self.pos.x, self.pos.y, self.w, self.h)
+	return that
 end
