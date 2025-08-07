@@ -1,30 +1,44 @@
 function Ball(x, y, w, h)
-	local that = {}
+	local ball = {}
 
-	that.pos = Vec2(x, y)
-	that.w = w or 6
-	that.h = h or 6
-	that.speed = 100
-	that.velocity = Vec2(0, 0)
-	that.velocity.set_length(that.speed)
+	ball.pos = Vec2(x, y)
+	ball.w = w or 6
+	ball.h = h or 6
+	ball.speed = 100
+	ball.velocity = Vec2(0, 0)
+	ball.velocity.set_length(ball.speed)
 
-	function that.update(dt)
-		that.pos.add_to(that.velocity.multiply(dt))
+	function ball.update(dt)
+		ball.pos.add_to(ball.velocity.multiply(dt))
 	end
 
-	function that.reset()
+	function ball.reset()
 		-- randomly generate the ball above the screen and shot it down
-		local angle = math.random(math.pi / 4, math.pi * 3 / 4)
-		that.pos.x = (WIDTH - that.w) / 2
-		that.pos.y = -10
+		local angle = math.random(math.pi / 3, math.pi * 2 / 3)
+		ball.pos.x = (WIDTH - ball.w) / 2
+		ball.pos.y = -10
 
-		that.velocity.set_length(100)
-		that.velocity.set_angle(angle)
+		ball.velocity.set_length(100)
+		ball.velocity.set_angle(angle)
 	end
 
-	function that.draw()
-		love.graphics.rectangle("fill", that.pos.x, that.pos.y, that.w, that.h)
+	function ball.is_collide_with(paddle)
+		-- AABB
+		if
+			ball.pos.x > paddle.pos.x + paddle.w
+			or ball.pos.x + ball.w < paddle.pos.x
+			or ball.pos.y > paddle.pos.y + paddle.h
+			or ball.pos.y + ball.h < paddle.pos.y
+		then
+			return false
+		end
+
+		return true
 	end
 
-	return that
+	function ball.draw()
+		love.graphics.rectangle("fill", ball.pos.x, ball.pos.y, ball.w, ball.h)
+	end
+
+	return ball
 end

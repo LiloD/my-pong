@@ -1,19 +1,19 @@
 function Paddle(x, y, w, h)
-	local that = {}
+	local paddle = {}
 
-	that.w = w or 32
-	that.h = h or 6
-	that.pos = Vec2(x or (WIDTH - that.w) / 2, y or HEIGHT - that.h - 10)
-	that.dx = 0
+	paddle.w = w or 32
+	paddle.h = h or 6
+	paddle.pos = Vec2(x or (WIDTH - paddle.w) / 2, y or HEIGHT - paddle.h - 10)
+	paddle.dx = 0
 
-	function that.update(dt)
-		that.pos.x = that.pos.x + dt * that.dx
-		that.pos.x = math.clamp(that.pos.x, 0, WIDTH - that.w)
+	function paddle.update(dt)
+		paddle.pos.x = paddle.pos.x + dt * paddle.dx
+		paddle.pos.x = math.clamp(paddle.pos.x, 0, WIDTH - paddle.w)
 	end
 
-	function that.draw()
-		love.graphics.rectangle("fill", that.pos.x, that.pos.y, that.w, that.h)
+	function paddle.draw()
+		love.graphics.rectangle("fill", paddle.pos.x, paddle.pos.y, paddle.w, paddle.h)
 	end
 
-	return that
+	return paddle
 end

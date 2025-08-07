@@ -33,6 +33,8 @@ function love.load()
 	player = Paddle()
 	ball = Ball()
 	ball.reset()
+
+	ball.velocity.set_angle(math.pi / 2)
 end
 
 function love.keypressed(key)
@@ -58,16 +60,33 @@ function love.update(dt)
 	if ball.pos.x < 0 then
 		ball.pos.x = 0
 		ball.velocity.x = -ball.velocity.x
+		sounds.paddle_hit:play()
 	end
 
 	if ball.pos.x > WIDTH - ball.w then
 		ball.pos.x = WIDTH - ball.w
 		ball.velocity.x = -ball.velocity.x
+		sounds.paddle_hit:play()
 	end
 
 	-- handle ball reset
-	if ball.pos.y > HEIGHT + 10 then
+	if ball.pos.y > HEIGHT + 10 or (ball.pos.y < -10 and ball.velocity.y < 0) then
 		ball.reset()
+	end
+
+	-- handle ball and paddle collision
+	if ball.is_collide_with(player) then
+		ball.pos.y = player.pos.y - ball.h
+
+		local collision_x = ball.pos.x + ball.w / 2
+		local norm = math.norm(collision_x, player.pos.x, player.pos.x + player.w)
+		local reflect_angle = math.lerp(norm, math.pi * 1.2, math.pi * 1.8)
+		local speed_boost = math.lerp(math.abs(norm - 0.5), 1.05, 1.2)
+
+		ball.velocity.set_angle(reflect_angle)
+		ball.velocity.set_length(ball.velocity.get_length() * speed_boost)
+
+		sounds.paddle_hit:play()
 	end
 
 	ball.update(dt)
@@ -77,7 +96,7 @@ end
 function love.draw()
 	push:start()
 	love.graphics.setFont(fonts.big)
-	love.graphics.printf("Hello World", 0, 6, WIDTH, "center")
+	-- love.graphics.printf("Hello World", 0, 6, WIDTH, "center")
 	player.draw()
 	ball.draw()
 	display_fps()

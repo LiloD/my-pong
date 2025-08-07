@@ -6,8 +6,8 @@ function math.norm(num, min, max)
 	return (num - min) / (max - min)
 end
 
-function math.lerp(min, max, t)
-	return min + (max - min) * t
+function math.lerp(num, min, max)
+	return min + (max - min) * num
 end
 
 function display_fps()
