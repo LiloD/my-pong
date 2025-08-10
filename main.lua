@@ -2,11 +2,15 @@ local push = require("libs.push")
 
 require("utils")
 require("vec2")
+require("particle")
+require("impact_flash")
 require("entities.ball")
 require("entities.paddle")
 
 WIDTH = 192
 HEIGHT = 256
+
+balls = {}
 
 function love.load()
 	love.graphics.setDefaultFilter("nearest", "nearest")
@@ -31,10 +35,16 @@ function love.load()
 	})
 
 	player = Paddle()
-	ball = Ball()
-	ball.reset()
+	for _ = 1, 1, 1 do
+		local ball = Ball()
+		ball.reset()
+		ball.pos.y = math.random(-100, -200)
+		ball.velocity.set_angle(math.lerp(math.random(), math.pi / 3, math.pi * 2 / 3))
+		ball.velocity.set_length(math.random(100, 150))
+		table.insert(balls, ball)
+	end
 
-	ball.velocity.set_angle(math.pi / 2)
+	impactFlash = ImpactFlash()
 end
 
 function love.keypressed(key)
@@ -56,49 +66,29 @@ function love.update(dt)
 		player.dx = 0
 	end
 
-	-- handle ball & wall collision
-	if ball.pos.x < 0 then
-		ball.pos.x = 0
-		ball.velocity.x = -ball.velocity.x
-		sounds.paddle_hit:play()
-	end
-
-	if ball.pos.x > WIDTH - ball.w then
-		ball.pos.x = WIDTH - ball.w
-		ball.velocity.x = -ball.velocity.x
-		sounds.paddle_hit:play()
-	end
-
 	-- handle ball reset
-	if ball.pos.y > HEIGHT + 10 or (ball.pos.y < -10 and ball.velocity.y < 0) then
-		ball.reset()
+	-- if ball.pos.y > HEIGHT + 10 or (ball.pos.y < -10 and ball.velocity.y < 0) then
+	-- 	ball.reset()
+	-- end
+	-- ball.update(dt)
+
+	for _, ball in ipairs(balls) do
+		ball.update(dt)
 	end
 
-	-- handle ball and paddle collision
-	if ball.is_collide_with(player) then
-		ball.pos.y = player.pos.y - ball.h
-
-		local collision_x = ball.pos.x + ball.w / 2
-		local norm = math.norm(collision_x, player.pos.x, player.pos.x + player.w)
-		local reflect_angle = math.lerp(norm, math.pi * 1.2, math.pi * 1.8)
-		local speed_boost = math.lerp(math.abs(norm - 0.5), 1.05, 1.2)
-
-		ball.velocity.set_angle(reflect_angle)
-		ball.velocity.set_length(ball.velocity.get_length() * speed_boost)
-
-		sounds.paddle_hit:play()
-	end
-
-	ball.update(dt)
+	impactFlash.update(dt)
 	player.update(dt)
 end
 
 function love.draw()
 	push:start()
 	love.graphics.setFont(fonts.big)
-	-- love.graphics.printf("Hello World", 0, 6, WIDTH, "center")
+	for _, ball in ipairs(balls) do
+		ball.draw()
+	end
 	player.draw()
-	ball.draw()
+	impactFlash.draw()
+
 	display_fps()
 	push:finish()
 end
