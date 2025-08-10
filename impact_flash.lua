@@ -12,8 +12,8 @@ function ImpactFlash()
 		for _, p in ipairs(impactFlash.particles) do
 			p.pos.x = x
 			p.pos.y = y + 5
-			p.velocity.x = love.math.random(-10, 10)
-			p.velocity.y = love.math.random(-5, -15)
+			p.velocity.x = love.math.random(-20, 20)
+			p.velocity.y = love.math.random(-10, -30)
 			p.life_time = impactFlash.duration
 		end
 	end

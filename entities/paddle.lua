@@ -8,7 +8,7 @@ function Paddle(x, y, w, h)
 
 	function paddle.update(dt)
 		paddle.pos.x = paddle.pos.x + dt * paddle.dx
-		paddle.pos.x = math.clamp(paddle.pos.x, 0, WIDTH - paddle.w)
+		-- paddle.pos.x = math.clamp(paddle.pos.x, 0, WIDTH - paddle.w)
 	end
 
 	function paddle.draw()
