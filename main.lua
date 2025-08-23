@@ -1,6 +1,7 @@
 local push = require("libs.push")
 
 require("utils")
+require("events")
 require("vec2")
 require("particle")
 require("collision")
@@ -12,8 +13,6 @@ require("states.play_state")
 
 WIDTH = 192
 HEIGHT = 256
-
-balls = {}
 
 function love.load()
 	love.graphics.setDefaultFilter("nearest", "nearest")
@@ -30,6 +29,13 @@ function love.load()
 		paddle_hit = love.audio.newSource("assets/sounds/paddle_hit.wav", "static"),
 	}
 
+	events = Events()
+
+	globals = {
+		hit_count = 0,
+		health = 10,
+	}
+
 	push:setupScreen(WIDTH, HEIGHT, WIDTH * 3, HEIGHT * 3, {
 		fullscreen = false,
 		resizable = true,
@@ -37,21 +43,10 @@ function love.load()
 		canvas = false,
 	})
 
-	-- player = Paddle()
-	-- for _ = 1, 1, 1 do
-	-- 	local ball = Ball()
-	-- 	ball.reset()
-	-- 	ball.pos.y = math.random(-100, -200)
-	-- 	ball.velocity.set_angle(math.lerp(math.random(), math.pi / 3, math.pi * 2 / 3))
-	-- 	ball.velocity.set_length(math.random(100, 150))
-	-- 	table.insert(balls, ball)
-	-- end
-	--
-	-- impactFlash = ImpactFlash()
-
 	state_machine = StateMachine({
 		play = PlayState(),
 	})
+
 	state_machine.change("play")
 end
 
@@ -67,38 +62,11 @@ end
 
 function love.update(dt)
 	state_machine.update(dt)
-	-- if love.keyboard.isDown("left") then
-	-- 	player.dx = -100
-	-- elseif love.keyboard.isDown("right") then
-	-- 	player.dx = 100
-	-- else
-	-- 	player.dx = 0
-	-- end
-	--
-	-- -- handle ball reset
-	-- -- if ball.pos.y > HEIGHT + 10 or (ball.pos.y < -10 and ball.velocity.y < 0) then
-	-- -- 	ball.reset()
-	-- -- end
-	-- -- ball.update(dt)
-	--
-	-- for _, ball in ipairs(balls) do
-	-- 	ball.update(dt)
-	-- end
-	--
-	-- impactFlash.update(dt)
-	-- player.update(dt)
 end
 
 function love.draw()
 	push:start()
 	state_machine.draw()
-	-- love.graphics.setFont(fonts.big)
-	-- for _, ball in ipairs(balls) do
-	-- 	ball.draw()
-	-- end
-	-- player.draw()
-	-- impactFlash.draw()
-	--
 	display_fps()
 	push:finish()
 end

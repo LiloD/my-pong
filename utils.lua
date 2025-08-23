@@ -14,13 +14,14 @@ function display_fps()
 	local fps = love.timer.getFPS()
 
 	-- 计算文本宽度用于背景框
-	local text = "FPS: " .. fps
-	local textWidth = fonts.small:getWidth(text)
-	local textHeight = fonts.small:getHeight()
+	local text = "FPS: " .. fps .. "\n" .. "HITS: " .. globals.hit_count .. "\n" .. "HP: " .. globals.health
 
-	-- 绘制半透明背景框
-	love.graphics.setColor(0, 0, 0, 0.5)
-	love.graphics.rectangle("fill", 8, 8, textWidth + 4, textHeight + 4)
+	-- local textWidth = fonts.small:getWidth(text)
+	-- local textHeight = fonts.small:getHeight()
+
+	-- -- 绘制半透明背景框
+	-- love.graphics.setColor(0, 0, 0, 0.5)
+	-- love.graphics.rectangle("fill", 8, 8, textWidth + 4, textHeight + 4)
 
 	-- 绘制FPS文本（绿色）
 	love.graphics.setColor(0, 1, 0, 1)

@@ -1,17 +1,66 @@
-function Collision(objects)
+function Collision(objs)
 	local collision = {}
 
-	collision.objects = objects or {}
+	local player = objs.player
+	local balls = objs.balls or {}
+
+	local left_wall = {
+		w = 10,
+		h = HEIGHT,
+		pos = Vec2(-10, 0),
+	}
+
+	local right_wall = {
+		w = 10,
+		h = HEIGHT,
+		pos = Vec2(WIDTH, 0),
+	}
 
 	function collision.update()
 		collision.handle_player_wall_collision()
+		collision.handle_ball_collision()
+	end
+
+	function collision.add_ball(ball)
+		table.insert(balls, ball)
+	end
+
+	-- handle ball collision with wall and paddle
+	function collision.handle_ball_collision()
+		for _, ball in ipairs(balls) do
+			-- handle ball & wall collision
+			if collision.AABB(ball, left_wall) then
+				ball.pos.x = 0
+				ball.velocity.x = -ball.velocity.x
+
+                events.fire("ball_wall_hit")
+			end
+
+			if collision.AABB(ball, right_wall) then
+				ball.pos.x = WIDTH - ball.w
+				ball.velocity.x = -ball.velocity.x
+
+                events.fire("ball_wall_hit")
+			end
+
+			-- handle ball & paddle collision
+			if collision.AABB(ball, player) then
+				ball.pos.y = player.pos.y - ball.h
+
+				local collision_x = ball.pos.x + ball.w / 2
+				local norm = math.norm(collision_x, player.pos.x, player.pos.x + player.w)
+				local reflect_angle = math.lerp(norm, math.pi * 1.2, math.pi * 1.8)
+				local speed_boost = math.lerp(math.abs(norm - 0.5), 1.05, 1.2)
+
+				ball.velocity.set_angle(reflect_angle)
+				ball.velocity.set_length(ball.velocity.get_length() * speed_boost)
+
+                events.fire("ball_paddle_hit")
+			end
+		end
 	end
 
 	function collision.handle_player_wall_collision()
-		local player = collision.objects.player
-		local right_wall = collision.objects.right_wall
-		local left_wall = collision.objects.left_wall
-
 		if collision.AABB(player, right_wall) then
 			player.pos.x = WIDTH - player.w
 		end
