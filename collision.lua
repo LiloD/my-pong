@@ -50,7 +50,7 @@ function Collision(objs)
 				local collision_x = ball.pos.x + ball.w / 2
 				local norm = math.norm(collision_x, player.pos.x, player.pos.x + player.w)
 				local reflect_angle = math.lerp(norm, math.pi * 1.2, math.pi * 1.8)
-				local speed_boost = math.lerp(math.abs(norm - 0.5), 1.05, 1.2)
+				local speed_boost = math.lerp(math.abs(norm - 0.5) * 2, 1.1, 1.5)
 
 				ball.velocity.set_angle(reflect_angle)
 				ball.velocity.set_length(ball.velocity.get_length() * speed_boost)

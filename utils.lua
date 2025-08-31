@@ -10,7 +10,7 @@ function math.lerp(num, min, max)
 	return min + (max - min) * num
 end
 
-function display_fps()
+function display_info()
 	local fps = love.timer.getFPS()
 
 	-- 计算文本宽度用于背景框

@@ -19,6 +19,7 @@ function PlayState()
 		sounds.paddle_hit:play()
 		globals.hit_count = globals.hit_count + 1
 
+        -- for every 3 hit, generate a new ball
 		if globals.hit_count % 3 == 0 then
 			playState.gen_ball()
 		end
@@ -27,12 +28,13 @@ function PlayState()
 	function playState.reset_ball(ball)
 		ball.pos.y = -10
 		ball.pos.x = (WIDTH - ball.w) / 2
-		ball.velocity.set_angle(love.math.random(math.pi * 0.3, math.pi * 0.6))
+        local angle = math.lerp(math.random(), math.pi * 0.3, math.pi * 0.6)
+		ball.velocity.set_angle(angle)
 		ball.velocity.set_length(100)
 	end
 
 	function playState.gen_ball()
-		local ball = Ball(WIDTH / 2, -10, 4, 4)
+		local ball = Ball(WIDTH / 2, -10, 6, 6)
 		ball.velocity.set_angle(math.pi / 2)
 		table.insert(objects.balls, ball)
 		collision.add_ball(ball)
@@ -72,6 +74,10 @@ function PlayState()
 				playState.reset_ball(ball)
 			end
 		end
+
+        if globals.health == 0 then
+            
+        end
 	end
 
 	function playState.draw()

@@ -5,7 +5,8 @@ require("events")
 require("vec2")
 require("particle")
 require("collision")
-require("impact_flash")
+require("effects.explosion")
+require("effects.effect_system")
 require("entities.ball")
 require("entities.paddle")
 require("states.state_machine")
@@ -47,12 +48,16 @@ function love.load()
 		play = PlayState(),
 	})
 
-	state_machine.change("play")
+	effect_system = EffectSystem()
 end
 
 function love.keypressed(key)
 	if key == "escape" then
 		love.event.quit()
+	end
+	
+    if key == "space" then
+        effect_system.create_explosion(WIDTH/2, HEIGHT/2)
 	end
 end
 
@@ -62,11 +67,13 @@ end
 
 function love.update(dt)
 	state_machine.update(dt)
+	effect_system.update(dt)
 end
 
 function love.draw()
 	push:start()
 	state_machine.draw()
-	display_fps()
+	effect_system.draw()
+	display_info()
 	push:finish()
 end
